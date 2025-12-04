@@ -1,12 +1,8 @@
 import { Handle, Position } from "@xyflow/react";
-import type { SupportedAssets } from "../sheets/TriggerSheet";
 
-export type TradingMetaData = {
-    type: "LONG" | "SHORT",
-    qty: number,
-    symbol: typeof SupportedAssets[0]
-    
-}
+import { TradingMetaData } from "common/types";
+
+
 export default function Lighter ({data}:{
     data:{
         metadata : TradingMetaData

@@ -1,1 +1,41 @@
-console.log("Hello via Bun!");
+import express from 'express';
+
+
+const app = express();
+app.use(express.json());
+
+app.post('/signup', (req , res) => {
+
+})
+
+
+app.post('/login', (req , res) => {
+
+})
+
+app.post("/workflow", (req , res) => {
+
+})
+
+app.put("/workflow", (req ,res) => {
+
+})
+
+app.get("/workflow/:workflowId", (req , res) => {
+
+})
+
+app.get("/workflow/executions/:workflowId", (req , res) => {
+
+})
+
+app.post("/credentials", (req , res) => {
+
+})
+app.get("/credentials", (req , res) => {
+
+})
+
+app.listen(process.env.PORT || 3000 , () => {
+    console.log(`Server is running on port ${process.env.PORT || 3000}`);
+})

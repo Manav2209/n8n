@@ -1,10 +1,9 @@
 'use client'
 
 import { Handle, Position } from "@xyflow/react"
+import { TimerMetaData } from "common/types"
 
-export type TimerMetaData = {
-  time:number
-}
+
 export const Timer = ({data , isConnectable}:{
   isConnectable: boolean,
   data: {

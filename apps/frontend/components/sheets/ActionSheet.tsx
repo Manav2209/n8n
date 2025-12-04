@@ -22,24 +22,28 @@ import { Button } from "@/components/ui/button";
 
 import { useState } from "react";
 import { Input } from "@/components/ui/input"
-import { TradingMetaData } from "../actions/lighter";
+import { SupportedAssets, TradingMetaData } from "common/types";
+
 
 export const SupportedAction = [
     {
         id: "backpack",
         title: "backpack",
+        description:"Place the trade using backpack"
     },
     {
         id: "lighter",
         title: "lighter",
+        description:"Place the trade using lighter"
     },
     {
         id: "hyperliquid",
         title: "hyperliquid",
+        description :"Place the trade using hyperliquid"
     },
 ];
 
-export const SupportedAssets = ["SOL", "ETH", "BTC"];
+
 
 export const ActionSheet = ({
     onSelect,

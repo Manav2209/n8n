@@ -1,8 +1,11 @@
 {
-  "name": "backend",
+  "name": "db",
   "module": "index.ts",
   "type": "module",
   "private": true,
+  "exports":{
+    "./client":"./index.ts"
+  },
   "devDependencies": {
     "@types/bun": "latest"
   },
@@ -10,9 +13,6 @@
     "typescript": "^5"
   },
   "dependencies": {
-    "@types/express": "^5.0.6",
-    "@types/jsonwebtoken": "^9.0.10",
-    "express": "^5.2.1",
-    "jsonwebtoken": "^9.0.2"
+    "mongoose": "^9.0.0"
   }
 }

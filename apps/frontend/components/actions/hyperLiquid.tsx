@@ -1,5 +1,6 @@
 import { Handle, Position } from "@xyflow/react";
-import { TradingMetaData } from "./lighter";
+import { TradingMetaData } from "common/types";
+
 
 
 export default function HyperLiquid({data} : {

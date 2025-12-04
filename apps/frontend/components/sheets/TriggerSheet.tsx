@@ -22,8 +22,8 @@ import { Button } from "@/components/ui/button";
 
 import { useState } from "react";
 import { Input } from "../ui/input";
-import { PriceMetaData } from "../trigger/PriceTrigger";
-import { TimerMetaData } from "../trigger/Timer";
+import { PriceMetaData, SupportedAssets, TimerMetaData } from "common/types";
+
 
 export const SupportedTrigger = [
   {
@@ -38,7 +38,6 @@ export const SupportedTrigger = [
   },
 ];
 
-export const SupportedAssets = ["SOL", "ETH", "BTC"];
 
 export const TriggerSheet = ({
   onSelect,

@@ -1,11 +1,9 @@
 'use client'
 
 import { Handle, Position } from "@xyflow/react"
+import {  type PriceMetaData } from "common/types" 
 
-export type PriceMetaData = {
-  asset : string,
-  price : number
-}
+
 export const PriceTrigger = ({data , isConnectable}:{
   isConnectable: boolean,
   data: {
