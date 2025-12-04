@@ -1,88 +1,161 @@
-"use client"
-import { useState, useCallback } from 'react';
-import { ReactFlow, applyNodeChanges, applyEdgeChanges, addEdge, NodeChange, type  NodeTypes } from '@xyflow/react';
-import '@xyflow/react/dist/style.css';
-import { TriggerSheet } from '@/components/TriggerSheet';
-import { PriceTrigger } from '@/components/trigger/PriceTrigger';
-import { Timer } from '@/components/trigger/Timer';
+"use client";
+import { useState, useCallback } from "react";
+import {
+  ReactFlow,
+  applyNodeChanges,
+  applyEdgeChanges,
+  addEdge,
+  NodeChange,
+  type NodeTypes,
+  Background,
+  Controls,
+  Connection,
+} from "@xyflow/react";
+import "@xyflow/react/dist/style.css";
+import { TriggerSheet } from "@/components/sheets/TriggerSheet";
+import { PriceMetaData, PriceTrigger } from "@/components/trigger/PriceTrigger";
+import { Timer, TimerMetaData } from "@/components/trigger/Timer";
+import Lighter, { TradingMetaData } from "@/components/actions/lighter";
+import { ActionSheet } from "@/components/sheets/ActionSheet";
+import Backpack from "@/components/actions/backpack";
+import HyperLiquid from "@/components/actions/hyperLiquid";
 
-export type NodeKind =  'price-trigger' | 'timer' | 'lighter' | 'backpack' | 'hyperliquid'
+export type NodeKind =
+  | "price-trigger"
+  | "timer"
+  | "lighter"
+  | "backpack"
+  | "hyperliquid";
 
-export type NodeMetadata = any;
+export type NodeMetadata = TradingMetaData | PriceMetaData | TimerMetaData;
 
 const nodeTypes = {
-    'price-trigger': PriceTrigger,
-    'timer': Timer,
-}
+  "price-trigger": PriceTrigger,
+  "timer": Timer,
+  "lighter": Lighter,
+  "backpack": Backpack,
+  "hyperliquid": HyperLiquid,
+};
 
 interface NodeType {
-    type: NodeKind ; 
-    data: {
-        kind :'action' | 'trigger';
-        metadata: NodeMetadata;
-
-    }
-    id: string,
-    position: { 
-        x: number,
-        y: number
-    },
+  type: NodeKind;
+  data: {
+    kind: "action" | "trigger";
+    metadata: NodeMetadata;
+  };
+  id: string;
+  position: {
+    x: number;
+    y: number;
+  };
 }
 
 interface Edge {
-    id: string,
-    source: string,
-    target: string,
+  id: string;
+  source: string;
+  target: string;
 }
 
-export  default function () {
-        const [nodes, setNodes] = useState<NodeType[]>([]);
-        const [edges, setEdges] = useState<Edge[]>([]);
-    
-        const onNodesChange = useCallback(
-        (changes: any) => setNodes((nodesSnapshot) => applyNodeChanges(changes, nodesSnapshot)),
-        [],
-        );
-        const onEdgesChange = useCallback(
-        (changes : any) => setEdges((edgesSnapshot) => applyEdgeChanges(changes, edgesSnapshot)),
-        [],
-        );
-        const onConnect = useCallback(
-        (params: any) => setEdges((edgesSnapshot) => addEdge(params, edgesSnapshot)),
-        [],
-        );
-    
-        return (
-        <div style={{ width: '100vw', height: '100vh' }}>
-        {!nodes.length && (
-            <TriggerSheet
-                onSelect={(type, metadata) => {
-                setNodes([
-                    ...nodes,
-                    {
-                    id: Math.random().toString(),
-                    type,
-                    position: { x: 0, y: 0 },
-                    data: { 
-                        kind: 'trigger',
-                        
-                        metadata,
-                        
-                    },
-                    },
-                ]);
-                }}
-            />
-            )}
-            <ReactFlow
-            nodeTypes={nodeTypes}
-            nodes={nodes}
-            edges={edges}
-            onNodesChange={onNodesChange}
-            onEdgesChange={onEdgesChange}
-            onConnect={onConnect}
-            fitView
-            />
-        </div>
-    );
+export default function () {
+  const [nodes, setNodes] = useState<NodeType[]>([]);
+  const [edges, setEdges] = useState<Edge[]>([]);
+  const [selectAction , setSelectAction] = useState<{
+    position:{
+      x:number,
+      y:number
+    },
+    startingNodeId:string
+  }|null>(null);
+
+  const onNodesChange = useCallback(
+    (changes: any) =>
+      setNodes((nodesSnapshot) => applyNodeChanges(changes, nodesSnapshot)),
+    []
+  );
+  const onEdgesChange = useCallback( 
+    (changes: any) =>
+      setEdges((edgesSnapshot) => applyEdgeChanges(changes, edgesSnapshot)),
+    []
+  );
+  const onConnect = useCallback(
+    (params: any) =>
+      setEdges((edgesSnapshot) => addEdge(params, edgesSnapshot)),
+    []
+  );
+  
+  const onConnectEnd = useCallback((params : any, connectionInfo : any) => {
+
+    if(!connectionInfo.isValid){
+      console.log(connectionInfo)
+      setSelectAction({
+        startingNodeId: connectionInfo.fromNode.id,
+        position:{
+          x: connectionInfo.from.x +40,
+          y: connectionInfo.from.y +40
+        }
+      })
+      
+    }
+
+
+  }, []);
+
+  return (
+    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+    <div className="w-full max-w-6xl h-[80vh] border-2 border-gray-300 rounded-lg bg-white overflow-hidden">
+      {!nodes.length && (
+        <TriggerSheet
+          onSelect={(type, metadata) => {
+            setNodes([
+              ...nodes,
+              {
+                id: Math.random().toString(),
+                type,
+                position: { x: 0, y: 0 },
+                data: {
+                  kind: "trigger",
+
+                  metadata,
+                },
+              },
+            ]);
+          }}
+        />
+      )}
+      {selectAction && <ActionSheet  onSelect={(type, metadata) => {
+          const nodeId = Math.random().toString();
+            setNodes([
+              ...nodes,
+              {
+                id: nodeId,
+                type,
+                position: selectAction.position,
+                data: {
+                  kind: "action",
+                  metadata,
+                },
+              }]);
+              setEdges ([...edges,{
+                id: `${selectAction.startingNodeId}-${nodeId}`,
+                source: selectAction.startingNodeId,
+                target: nodeId
+              }])
+          setSelectAction (null);
+          }}/>}
+      <ReactFlow
+        nodeTypes={nodeTypes}
+        nodes={nodes}
+        edges={edges}
+        onNodesChange={onNodesChange}
+        onEdgesChange={onEdgesChange}
+        onConnect={onConnect}
+        onConnectEnd={onConnectEnd}
+        fitView
+      >
+  
+      <Controls />
+      </ReactFlow>
+    </div>
+    </div>
+  );
 }

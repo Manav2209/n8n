@@ -13,8 +13,9 @@ export const Timer = ({data , isConnectable}:{
 
 }) => {
   return (
-    <div className="p-4 border">
-      Every {data.metadata.time /3600} second
+    <div className="p-4 border-2 rounded-lg">
+      <div className="mx-auto font-bold">Timer</div>
+      Every {data.metadata.time} second
       <Handle  position={Position.Right} type={"source"} />
     </div>
   )
