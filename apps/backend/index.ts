@@ -3,7 +3,7 @@ import mongoose from "mongoose"
 import { ExecutionModel, NodesModel, UserModel, WorkflowModel } from 'db/client';
 import { CreateWorkflowSchema, SignupSchema, UpdateWorkflowSchema } from 'common/types';
 import bcrypt from "bcryptjs"
-
+import cors from "cors"
 import jwt from 'jsonwebtoken';
 import { authMiddleware } from './middleware';
 
@@ -13,6 +13,7 @@ const JWT_SECRET = process.env.JWT_SECRET!;
 
 const app = express();
 app.use(express.json());
+app.use(cors())
 
 
 app.post('/signup',async (req , res) => {
@@ -35,7 +36,6 @@ app.post('/signup',async (req , res) => {
         })
     }
 })
-
 
 app.post('/signin', async (req , res) => {
     const { success , data} =  SignupSchema.safeParse(req.body);
@@ -67,6 +67,29 @@ app.post('/signin', async (req , res) => {
             "message":"Please check the db"
         })
     }
+
+})
+
+app.post('/me' , authMiddleware, async(req , res)=> {
+
+    const userId  = req.userId;
+
+    if(!userId){
+        return res
+        .status(401)
+        .json({ message: "Unauthorized", error: "User ID not found in token" });
+    }
+
+    const user = await UserModel.findOne({_id: userId })
+
+        if(!user){
+        return res.status(400).json("User not found in db")
+        }
+
+    res.status(201).json({
+        userId : user.id,
+        username : user.username
+    })
 
 })
 
@@ -137,11 +160,12 @@ app.get("/workflow/executions/:workflowId", authMiddleware ,async(req , res) => 
         executions
     )
 })
+
 app.get("/nodes" , async (req ,res)=> {
     const nodes = await NodesModel.find();
     res.json(nodes)
 })
-app.listen(process.env.PORT || 3000 , () => {
-    console.log(`Server is running on port ${process.env.PORT || 3000}`);
+app.listen(process.env.PORT || 4000 , () => {
+    console.log(`Server is running on port ${process.env.PORT || 4000}`);
 })
 
