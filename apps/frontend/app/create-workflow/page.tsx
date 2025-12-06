@@ -5,20 +5,17 @@ import {
   applyNodeChanges,
   applyEdgeChanges,
   addEdge,
-  NodeChange,
-  type NodeTypes,
-  Background,
   Controls,
-  Connection,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import { TriggerSheet } from "@/components/sheets/TriggerSheet";
-import { PriceMetaData, PriceTrigger } from "@/components/trigger/PriceTrigger";
-import { Timer, TimerMetaData } from "@/components/trigger/Timer";
-import Lighter, { TradingMetaData } from "@/components/actions/lighter";
+import { PriceTrigger } from "@/components/trigger/PriceTrigger";
+import { Timer } from "@/components/trigger/Timer";
+import Lighter  from "@/components/actions/lighter";
 import { ActionSheet } from "@/components/sheets/ActionSheet";
 import Backpack from "@/components/actions/backpack";
 import HyperLiquid from "@/components/actions/hyperLiquid";
+import { TradingMetaData, PriceMetaData, TimerMetaData } from "common/types";
 
 export type NodeKind =
   | "price-trigger"

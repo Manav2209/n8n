@@ -1,24 +1,33 @@
 import { Handle, Position } from "@xyflow/react";
-
 import { TradingMetaData } from "common/types";
+import Image from "next/image";
 
+export default function Lighter({ data }: { data: { metadata: TradingMetaData } }) {
+  return (
+    <div className="w-20 h-20 bg-white border shadow-sm rounded-xl p-3 relative hover:shadow-md transition-all flex items-center justify-center">
 
-export default function Lighter ({data}:{
-    data:{
-        metadata : TradingMetaData
-    }
-}){
+      {/* Icon */}
+      <div className="p-2 bg-neutral-100 rounded-full flex items-center justify-center">
+        <Image
+          src="/assets/Lighter.jpeg"
+          alt="Lighter"
+          width={22}
+          height={22}
+          className="rounded-full"
+        />
+      </div>
 
-    return(
-        <div className="p-4 border-2 rounded-lg">
-            <div className="font-bold">Lighter Trade</div>
-            <div className="flex gap-1">
-                <div>{data.metadata.type} </div>
-                <div>{data.metadata.qty}</div> 
-                <div>{data.metadata.symbol}</div>
-            </div>
-            <Handle  position={Position.Right} type={"source"} />
-            <Handle  position={Position.Left} type={"target"} />
-        </div>
-    )
+      {/* Handles */}
+      <Handle
+        position={Position.Right}
+        type="source"
+        className="bg-black!"
+      />
+      <Handle
+        position={Position.Left}
+        type="target"
+        className="bg-black!"
+      />
+    </div>
+  );
 }
