@@ -9,16 +9,18 @@ export const SignupSchema = z.object({
 
 export const CreateWorkflowSchema = z.object({
   nodes:z.array(z.object({
-    type: z.string(),
+    nodeId: z.string(),
+    type:z.string(),
     data:z.object({
         kind:z.enum(["ACTION", "TRIGGER"]),
-        metadata:z.any()
+        metaData:z.any()
     }),
     id:z.string(),
     position:z.object({
         x: z.number(),
         y:z.number()
-    })
+    }),
+    credentials:z.any()
   })),
   edges:z.array(z.object({
     id:z.string(),
@@ -29,16 +31,18 @@ export const CreateWorkflowSchema = z.object({
 })
 export const UpdateWorkflowSchema = z.object({
   nodes:z.array(z.object({
-    type: z.string(),
+    type:z.string(),
+    nodeId: z.string(),
     data:z.object({
         kind:z.enum(["ACTION", "TRIGGER"]),
-        metadata:z.any()
+        metaData:z.any()
     }),
     id:z.string(),
     position:z.object({
         x: z.number(),
         y:z.number()
-    })
+    }),
+    credentials:z.any()
   })),
   edges:z.array(z.object({
     id:z.string(),

@@ -16,7 +16,7 @@ app.use(express.json());
 app.use(cors())
 
 
-app.post('/signup',async (req , res) => {
+app.post('/signup', async (req , res) => {
     const {success , data } = SignupSchema.safeParse(req.body);
     if(!success){
         return res.status(403).json("Incorret Inputs")
@@ -32,7 +32,7 @@ app.post('/signup',async (req , res) => {
         })
     }catch(e){
         res.status(411).json({
-            "message":"Username already exists"
+            message:"Username already exists"
         })
     }
 })
@@ -43,16 +43,15 @@ app.post('/signin', async (req , res) => {
         return res.status(403).json("Incorret Inputs")
     }
     try{
-        
         const user = await UserModel.findOne({
             username: data.username
         })
         if(!user){
             return res.status(400).json("User not found")
         }
-        const checkHashPassword = await bcrypt.compare (data.password,user.password);
+        const isPasswordCorrect = await bcrypt.compare (data.password, user.password);
 
-        if(!checkHashPassword){
+        if(isPasswordCorrect== false){
             return res.status(402).json("Wrong password")
         }
 
@@ -64,7 +63,7 @@ app.post('/signin', async (req , res) => {
         })
     }catch(e){
         res.status(411).json({
-            "message":"Please check the db"
+            message:"Please check the db"
         })
     }
 
@@ -110,7 +109,7 @@ app.post("/workflow",authMiddleware, async (req , res) => {
         })
     }catch(e){
         return res.status(411).json({
-            "message":"Failed to create a workflow"
+            message:"Failed to create a workflow"
         })
     }
 })
@@ -152,6 +151,11 @@ app.get("/workflow/:workflowId", authMiddleware , async (req ,res) => {
         workflow
     })
 
+})
+
+app.get("/workflows" , authMiddleware , async (req , res)=>{
+    const workflows = await WorkflowModel.find({userId: req.userId});
+    res.json(workflows)
 })
 
 app.get("/workflow/executions/:workflowId", authMiddleware ,async(req , res) => {

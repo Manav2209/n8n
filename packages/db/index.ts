@@ -65,8 +65,12 @@ const workflowNodeSchema = new Schema({
         required: true,
         ref:'Nodes'
     },
+    type: {
+        type:String,
+        required: true
+    },
     data:NodeDataSchema,
-    credientials:Schema.Types.Mixed
+    credentials:Schema.Types.Mixed
 },{
     _id: false
 })

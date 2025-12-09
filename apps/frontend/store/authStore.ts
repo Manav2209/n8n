@@ -6,7 +6,7 @@ import axios from "axios";
 interface User {
     id?: string;
 }
-const BACKEND_URL= process.env.BACKEND_URL!
+const BACKEND_URL= process.env.BACKEND_URL! || "http://localhost:4000"
 
 interface AuthState {
     user: User | null;
