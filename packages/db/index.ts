@@ -60,7 +60,7 @@ const workflowNodeSchema = new Schema({
         required: true
     },
     position : PositionSchema,
-    nodeId:{
+    nodeId :{
         type: mongoose.Types.ObjectId,
         required: true,
         ref:'Nodes'

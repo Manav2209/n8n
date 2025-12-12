@@ -69,7 +69,7 @@ app.post('/signin', async (req , res) => {
 
 })
 
-app.post('/me' , authMiddleware, async(req , res)=> {
+app.get('/me' , authMiddleware, async(req , res)=> {
 
     const userId  = req.userId;
 
@@ -92,7 +92,7 @@ app.post('/me' , authMiddleware, async(req , res)=> {
 
 })
 
-app.post("/workflow",authMiddleware, async (req , res) => {
+app.post("/upload-workflow",authMiddleware, async (req , res) => {
     const userId = req.userId;
     const {success , data} = CreateWorkflowSchema.safeParse(req.body);
     if(!success){
@@ -108,7 +108,7 @@ app.post("/workflow",authMiddleware, async (req , res) => {
             id: workflow._id
         })
     }catch(e){
-        return res.status(411).json({
+        return res.status(407).json({
             message:"Failed to create a workflow"
         })
     }
@@ -169,7 +169,7 @@ app.get("/nodes" , async (req ,res)=> {
     const nodes = await NodesModel.find();
     res.json(nodes)
 })
-app.listen(process.env.PORT || 4000 , () => {
-    console.log(`Server is running on port ${process.env.PORT || 4000}`);
+app.listen(process.env.PORT || 5000 , () => {
+    console.log(`Server is running on port ${process.env.PORT || 5000}`);
 })
 

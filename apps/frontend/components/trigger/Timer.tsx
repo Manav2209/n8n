@@ -9,7 +9,7 @@ export const Timer = ({
   isConnectable
 }: {
   isConnectable: boolean,
-  data: { metadata: TimerMetaData }
+  data: { metaData: TimerMetaData }
 }) => {
   return (
     <div className="w-40 bg-white shadow-sm border rounded-xl p-4 flex items-center gap-3 transition-all hover:shadow-md">
@@ -19,7 +19,7 @@ export const Timer = ({
 
       <div className="flex flex-col">
         <span className="text-sm font-semibold">Timer</span>
-        <span className="text-xs text-gray-500">{data.metadata?.time ?? "—"} sec</span>
+        <span className="text-xs text-gray-500">{data.metaData?.time ?? "—"} sec</span>
       </div>
 
       <Handle

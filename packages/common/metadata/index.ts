@@ -15,3 +15,11 @@ export type PriceMetaData = {
 export type TimerMetaData = {
     time:number
 }
+
+export type ActionCredentialSchema ={
+    
+}
+
+export type TradingCredentialSchema = {
+    API_KEY : string
+}

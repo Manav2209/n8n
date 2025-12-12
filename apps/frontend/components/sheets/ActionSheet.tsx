@@ -22,7 +22,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 import { useState } from "react";
-import { SupportedAssets, TradingMetaData } from "common/types";
+import { SupportedAssets, TradingCredentialSchema, TradingMetaData } from "common/types";
 
 export const SupportedAction = [
   { id: "backpack", title: "Backpack", description: "Place the trade using Backpack" },
@@ -33,13 +33,16 @@ export const SupportedAction = [
 export const ActionSheet = ({
   onSelect,
 }: {
-  onSelect: (kind: NodeKind, metadata: TradingMetaData) => void;
+  onSelect: (kind: NodeKind, metaData: TradingMetaData , credentials : TradingCredentialSchema) => void;
 }) => {
-  const [metadata, setMetadata] = useState<TradingMetaData>({
+  const [metaData, setMetaData] = useState<TradingMetaData>({
     qty: 0,
     type: "LONG",
     symbol: "SOL",
   });
+  const [cred , setCred] = useState<TradingCredentialSchema>({
+    API_KEY:""
+  })
   const [selectedAction, setSelectedAction] = useState<string | undefined>();
 
   return (
@@ -76,10 +79,10 @@ export const ActionSheet = ({
                 <div className="flex flex-col gap-1">
                   <label className="font-medium text-sm">Quantity</label>
                   <Input
-                    type="number"
-                    value={metadata.qty}
+                    type="text"
+                    value={metaData.qty}
                     onChange={(e) =>
-                      setMetadata((prev) => ({ ...prev, qty: Number(e.target.value) }))
+                      setMetaData((prev) => ({ ...prev, qty: Number(e.target.value) }))
                     }
                   />
                 </div>
@@ -88,9 +91,9 @@ export const ActionSheet = ({
                 <div className="flex flex-col gap-1">
                   <label className="font-medium text-sm">Asset</label>
                   <Select
-                    value={metadata.symbol}
+                    value={metaData.symbol}
                     onValueChange={(value) =>
-                      setMetadata((prev) => ({ ...prev, symbol: value }))
+                      setMetaData((prev) => ({ ...prev, symbol: value }))
                     }
                   >
                     <SelectTrigger className="w-full">
@@ -112,9 +115,9 @@ export const ActionSheet = ({
                 <div className="flex flex-col gap-1">
                   <label className="font-medium text-sm">Type</label>
                   <Select
-                    value={metadata.type}
+                    value={metaData.type}
                     onValueChange={(value) =>
-                      setMetadata((prev) => ({ ...prev, type: value as "LONG" | "SHORT" }))
+                      setMetaData((prev) => ({ ...prev, type: value as "LONG" | "SHORT" }))
                     }
                   >
                     <SelectTrigger className="w-full">
@@ -129,6 +132,17 @@ export const ActionSheet = ({
                   </Select>
                 </div>
 
+                <div className="flex flex-col gap-1">
+                  <label className="font-medium text-sm">API_KEY</label>
+                  <Input
+                    type="text"
+                    value={cred.API_KEY}
+                    onChange={(e) =>
+                      setCred((prev) => ({ API_KEY: e.target.value }))
+                    }
+                  />
+                </div>
+
               </div>
             )}
           </SheetDescription>
@@ -138,7 +152,7 @@ export const ActionSheet = ({
           <Button
             variant="default"
             className="w-full"
-            onClick={() => selectedAction && onSelect(selectedAction as NodeKind, metadata)}
+            onClick={() => selectedAction && onSelect(selectedAction as NodeKind, metaData , cred)}
           >
             Create Trigger
           </Button>

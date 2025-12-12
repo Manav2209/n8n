@@ -20,7 +20,7 @@ import {
 
 import { Button } from "@/components/ui/button";
 import { Input } from "../ui/input";
-import { PriceMetaData, SupportedAssets, TimerMetaData } from "common/types";
+import { ActionCredentialSchema, PriceMetaData, SupportedAssets, TimerMetaData } from "common/types";
 import { useState } from "react";
 
 export const SupportedTrigger = [
@@ -31,10 +31,15 @@ export const SupportedTrigger = [
 export const TriggerSheet = ({
   onSelect,
 }: {
-  onSelect: (kind: NodeKind, metadata: PriceMetaData | TimerMetaData) => void;
+  onSelect: (kind: NodeKind, metaData: PriceMetaData | TimerMetaData , credentials: ActionCredentialSchema) => void;
 }) => {
-  const [metadata, setMetadata] = useState<PriceMetaData | TimerMetaData>({ time: 3600 });
+  const [metaData, setMetaData] = useState<PriceMetaData | TimerMetaData>({ time: 3600 });
   const [selectedTrigger, setSelectedTrigger] = useState<string | undefined>();
+  const [cred , setCred] = useState<ActionCredentialSchema>(
+    {
+
+    }
+  )
 
   return (
     <Sheet open={true}>
@@ -68,10 +73,10 @@ export const TriggerSheet = ({
                 <label className="font-medium text-sm">Number of seconds</label>
                 <Input
                   type="number"
-                  value={(metadata as TimerMetaData).time || ""}
+                  value={(metaData as TimerMetaData).time || ""}
                   onChange={(e) =>
-                    setMetadata((metadata) => ({
-                      ...metadata,
+                    setMetaData((metaData) => ({
+                      ...metaData,
                       time: Number(e.target.value),
                     }))
                   }
@@ -85,11 +90,11 @@ export const TriggerSheet = ({
                 <div className="flex flex-col gap-1">
                   <label className="font-medium text-sm">Price</label>
                   <Input
-                    type="number"
-                    value={(metadata as PriceMetaData).price || ""}
+                    type="text"
+                    value={(metaData as PriceMetaData).price || ""}
                     onChange={(e) =>
-                      setMetadata((metadata) => ({
-                        ...metadata,
+                      setMetaData((metaData) => ({
+                        ...metaData,
                         price: Number(e.target.value),
                       }))
                     }
@@ -99,10 +104,10 @@ export const TriggerSheet = ({
                 <div className="flex flex-col gap-1">
                   <label className="font-medium text-sm">Asset</label>
                   <Select
-                    value={(metadata as PriceMetaData).asset}
+                    value={(metaData as PriceMetaData).asset}
                     onValueChange={(value) =>
-                      setMetadata((metadata) => ({
-                        ...metadata,
+                      setMetaData((metaData) => ({
+                        ...metaData,
                         asset: value,
                       }))
                     }
@@ -133,7 +138,7 @@ export const TriggerSheet = ({
             className="w-full"
             onClick={() => {
               if (selectedTrigger) {
-                onSelect(selectedTrigger as NodeKind, metadata);
+                onSelect(selectedTrigger as NodeKind, metaData , cred);
               }
             }}
           >

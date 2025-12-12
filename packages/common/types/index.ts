@@ -9,7 +9,6 @@ export const SignupSchema = z.object({
 
 export const CreateWorkflowSchema = z.object({
   nodes:z.array(z.object({
-    nodeId: z.string(),
     type:z.string(),
     data:z.object({
         kind:z.enum(["ACTION", "TRIGGER"]),
@@ -32,7 +31,6 @@ export const CreateWorkflowSchema = z.object({
 export const UpdateWorkflowSchema = z.object({
   nodes:z.array(z.object({
     type:z.string(),
-    nodeId: z.string(),
     data:z.object({
         kind:z.enum(["ACTION", "TRIGGER"]),
         metaData:z.any()

@@ -15,7 +15,12 @@ import Lighter  from "@/components/actions/lighter";
 import { ActionSheet } from "@/components/sheets/ActionSheet";
 import Backpack from "@/components/actions/backpack";
 import HyperLiquid from "@/components/actions/hyperLiquid";
-import { TradingMetaData, PriceMetaData, TimerMetaData } from "common/types";
+import { TradingMetaData, PriceMetaData, TimerMetaData, TradingCredentialSchema, ActionCredentialSchema } from "common/types";
+import { Button } from "@/components/ui/button";
+import { BACKEND_URL, useAuthStore } from "@/store/authStore";
+import axios from "axios";
+import { metadata } from "../layout";
+import { cleanNodes } from "@/lib/helper";
 
 export type NodeKind =
   | "price-trigger"
@@ -25,6 +30,8 @@ export type NodeKind =
   | "hyperliquid";
 
 export type NodeMetadata = TradingMetaData | PriceMetaData | TimerMetaData;
+
+export type NodeCredentials = TradingCredentialSchema | ActionCredentialSchema
 
 const nodeTypes = {
   "price-trigger": PriceTrigger,
@@ -37,14 +44,15 @@ const nodeTypes = {
 interface NodeType {
   type: NodeKind;
   data: {
-    kind: "action" | "trigger";
-    metadata: NodeMetadata;
+    kind: "ACTION" | "TRIGGER";
+    metaData: NodeMetadata;
   };
   id: string;
   position: {
     x: number;
     y: number;
   };
+  credentials:NodeCredentials
 }
 
 interface Edge {
@@ -54,6 +62,7 @@ interface Edge {
 }
 
 export default function () {
+  const {token} = useAuthStore()
   const [nodes, setNodes] = useState<NodeType[]>([]);
   const [edges, setEdges] = useState<Edge[]>([]);
   const [selectAction , setSelectAction] = useState<{
@@ -83,7 +92,7 @@ export default function () {
   const onConnectEnd = useCallback((params : any, connectionInfo : any) => {
 
     if(!connectionInfo.isValid){
-      console.log(connectionInfo)
+    
       setSelectAction({
         startingNodeId: connectionInfo.fromNode.id,
         position:{
@@ -93,16 +102,33 @@ export default function () {
       })
       
     }
-
-
   }, []);
 
   return (
+    
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
+        <div>
+          <Button onClick= { async () => {
+
+            const res = await axios.post("http://localhost:5000/upload-workflow", {
+              nodes: nodes,
+              edges:edges
+            } , {
+              headers: {
+                Authorization: token,
+              },
+            })
+            console.log(res)
+          }}>
+            Publish
+          </Button>
+        </div>
+      
     <div className="w-full max-w-6xl h-[80vh] border-2 border-gray-300 rounded-lg bg-white overflow-hidden">
-      {!nodes.length && (
+
+      {!nodes.length &&(
         <TriggerSheet
-          onSelect={(type, metadata) => {
+          onSelect={(type, metaData , cred) => {
             setNodes([
               ...nodes,
               {
@@ -110,16 +136,17 @@ export default function () {
                 type,
                 position: { x: 0, y: 0 },
                 data: {
-                  kind: "trigger",
-
-                  metadata,
+                  kind: "TRIGGER",
+                   metaData,
+                  
                 },
+                credentials: cred
               },
             ]);
           }}
         />
       )}
-      {selectAction && <ActionSheet  onSelect={(type, metadata) => {
+      {selectAction && <ActionSheet  onSelect={(type, metaData , cred) => {
           const nodeId = Math.random().toString();
             setNodes([
               ...nodes,
@@ -128,9 +155,10 @@ export default function () {
                 type,
                 position: selectAction.position,
                 data: {
-                  kind: "action",
-                  metadata,
+                  kind: "ACTION",
+                  metaData,
                 },
+                credentials:cred
               }]);
               setEdges ([...edges,{
                 id: `${selectAction.startingNodeId}-${nodeId}`,
@@ -139,20 +167,24 @@ export default function () {
               }])
           setSelectAction (null);
           }}/>}
-      <ReactFlow
-        nodeTypes={nodeTypes}
-        nodes={nodes}
-        edges={edges}
-        onNodesChange={onNodesChange}
-        onEdgesChange={onEdgesChange}
-        onConnect={onConnect}
-        onConnectEnd={onConnectEnd}
-        fitView
-      >
-  
-      <Controls />
-      </ReactFlow>
-    </div>
+
+        <ReactFlow
+          nodeTypes={nodeTypes}
+          nodes={nodes}
+          edges={edges}
+          onNodesChange={onNodesChange}
+          onEdgesChange={onEdgesChange}
+          onConnect={onConnect}
+          onConnectEnd={onConnectEnd}
+          fitView
+        >
+    
+        <Controls />
+        </ReactFlow>
+      </div>
+
     </div>
   );
 }
+
+
