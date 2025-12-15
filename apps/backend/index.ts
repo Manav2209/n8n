@@ -93,7 +93,7 @@ app.get('/me' , authMiddleware, async(req , res)=> {
 })
 
 app.post("/upload-workflow",authMiddleware, async (req , res) => {
-    const userId = req.userId;
+    const userId = req.userId
     const {success , data} = CreateWorkflowSchema.safeParse(req.body);
     if(!success){
         return res.status(411).json("Wrong inputs please check it")
@@ -108,8 +108,9 @@ app.post("/upload-workflow",authMiddleware, async (req , res) => {
             id: workflow._id
         })
     }catch(e){
+        console.log(e)
         return res.status(407).json({
-            message:"Failed to create a workflow"
+            "message":"Failed to create a workflow"
         })
     }
 })
